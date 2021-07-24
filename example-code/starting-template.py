@@ -61,3 +61,7 @@ def main():
     game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     game.setup()
     arcade.run()
+
+
+if __name__ == "__main__":
+    main()
