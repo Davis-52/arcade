@@ -1,0 +1,6 @@
+Sound File Credits:
+  Caroline Ford (SoundBible, 'Eat Chips-SoundBible.com-1842806405')
+  dklon (OpenGameArt, 'jump_11-Platformer Jumping Sounds')
+  Mike Koenig (SoundBible, 'Dying-SoundBible.com-1255481835')
+  Mike Koenig (SoundBible, 'Bounce-SoundBible.com-12678623')
+  Mike Koenig (SoundBible, 'Banana Peel Slip Zip-SoundBible.com-803276918')
