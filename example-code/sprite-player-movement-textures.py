@@ -15,6 +15,7 @@ SPRITE_SETUP_CENTER_X_PLAYER = 50
 SPRITE_SETUP_CENTER_Y_PLAYER = 50
 SPRITE_SPEED_PLAYER = 2
 
+
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
