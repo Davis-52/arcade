@@ -17,29 +17,32 @@ SCREEN_TITLE = "Simple Platformer"
 # Viewport
 LEFT_VIEWPORT_MARGIN = 250
 RIGHT_VIEWPORT_MARGIN = 250
-BOTTOM_VIEWPORT_MARGIN = 50
+BOTTOM_VIEWPORT_MARGIN = 100
 TOP_VIEWPORT_MARGIN = 100
 
 # World
 GRAVITY = 5
 
 # Character
-CHARACTER_IMAGE = "images/blue-collar-zombie-large.png"
+CHARACTER_IMAGE = "assets/images/blue-collar-zombie-large.png"
 CHARACTER_SCALING = 4.0/3.0
 CHARACTER_SPEED = 6
-CHARACTER_JUMP_SOUND = "sounds/jump-11.wav"
+CHARACTER_JUMP_SOUND =  "assets/sounds/jump-11.wav"
 CHARACTER_JUMP_SPEED = 12
 CHARACTER_JUMP_LIMIT = 192
 
 # Tiles
-GRASS_IMAGE = "images/ground-tile.png"
-CRATE_IMAGE = "images/crate-tile.png"
+GRASS_IMAGE =  "assets/images/ground-tile.png"
+CRATE_IMAGE =  "assets/images/crate-tile.png"
 TILE_SCALING = 4.0/3.0
 
 # Collectables
-COIN_IMAGE = "images/brain-collectable.png"
-COIN_COLLECT_SOUND = "sounds/eat-chips.mp3"
+COIN_IMAGE =  "assets/images/brain-collectable.png"
+COIN_COLLECT_SOUND =  "assets/sounds/eat-chips.mp3"
 COIN_SCALING = 4.0/3.0
+
+# Map
+MAP_FILE = "assets/maps/my-map.tmx"
 
 
 class MyGame(arcade.Window):
@@ -69,18 +72,26 @@ class MyGame(arcade.Window):
         self.view_bottom = 0
         self.view_left = 0
 
+        # Overlay variables
+        self.score = 0
+
         # Load sounds
         self.collect_coin_sound = arcade.load_sound(COIN_COLLECT_SOUND)
         self.jump_sound = arcade.load_sound(CHARACTER_JUMP_SOUND)
 
     def setup(self):
         """ Set up game variables. Call to restart game. """
+        # Reset viewport
+        self.view_bottom = 0
+        self.view_left = 0
+
+        # Reset score
+        self.score = 0
+
         # Create sprite lists
         self.player_list = arcade.SpriteList()
-        # Note: spatial hashing speeds collision-finding time,
-        # but slows sprite movement time
-        self.wall_list = arcade.SpriteList(use_spatial_hash=True)
-        self.coin_list = arcade.SpriteList(use_spatial_hash=True)
+        self.wall_list = arcade.SpriteList()
+        self.coin_list = arcade.SpriteList()
 
         # Setup player character
         self.player_sprite = arcade.Sprite(CHARACTER_IMAGE, CHARACTER_SCALING)
@@ -91,6 +102,28 @@ class MyGame(arcade.Window):
         self.player_list.append(self.player_sprite)
         self.player_list.jump_height = 0
 
+        # Load map from Tiled editor file
+        my_map = arcade.tilemap.read_tmx(MAP_FILE)
+
+        # --Platforms
+        self.wall_list = arcade.tilemap.process_layer(
+            map_object=my_map,
+            layer_name='Platforms',
+            scaling=TILE_SCALING,
+            use_spatial_hash=True)
+
+        # --Coins
+        self.coin_list = arcade.tilemap.process_layer(
+            map_object=my_map,
+            layer_name='Coins',
+            scaling=COIN_SCALING,
+            use_spatial_hash=True)
+
+        # --Background
+        if my_map.background_color:
+            arcade.set_background_color(my_map.background_color)
+
+        ''' REPLACED with tmx map!
         # Add grass
         for x in range(0, 1250+256, 64):
             wall = arcade.Sprite(GRASS_IMAGE, TILE_SCALING)
@@ -110,18 +143,15 @@ class MyGame(arcade.Window):
             coin.center_x = x
             coin.center_y = 96
             self.coin_list.append(coin)
+        '''
+
+        # Setup physics engine
+        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list, GRAVITY)
 
         # Reset keyboard input
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
-
-        # Setup physics engine
-        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list, GRAVITY)
-
-        # Reset viewport
-        self.view_bottom = 0
-        self.view_left = 0
 
     def on_activate(self):
         """ Window comes into focus. """
@@ -143,6 +173,15 @@ class MyGame(arcade.Window):
         self.coin_list.draw()
         self.player_list.draw()
 
+        # Draw overlay
+        score_text = f"Score: {self.score}"
+        arcade.draw_rectangle_filled(SCREEN_WIDTH/2 + self.view_left, SCREEN_HEIGHT + self.view_bottom - 60,
+                                     SCREEN_WIDTH - 20, 100,
+                                     arcade.csscolor.BLACK)
+        arcade.draw_text(score_text,
+                         20 + self.view_left, SCREEN_HEIGHT - 40 + self.view_bottom,
+                         arcade.csscolor.WHITE, 20)
+
     def on_update(self, delta_time):
         """ Holds movement and game logic. """
         # Viewport scrolling
@@ -150,7 +189,7 @@ class MyGame(arcade.Window):
 
         left_bound = self.view_left + LEFT_VIEWPORT_MARGIN
         right_bound = self.view_left + SCREEN_WIDTH - RIGHT_VIEWPORT_MARGIN
-        top_bound = self.view_bottom + SCREEN_HEIGHT - TOP_VIEWPORT_MARGIN
+        top_bound = self.view_bottom + SCREEN_HEIGHT - TOP_VIEWPORT_MARGIN - 120
         bottom_bound = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
 
         if self.player_sprite.left < left_bound:
@@ -201,6 +240,7 @@ class MyGame(arcade.Window):
         for coin in coin_hit_list:
             coin.remove_from_sprite_lists()
             arcade.play_sound(self.collect_coin_sound)
+            self.score += 1
 
     def on_key_press(self, key, key_modifiers):
         """ Respond to keyboard key-press. """

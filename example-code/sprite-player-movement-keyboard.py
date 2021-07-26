@@ -10,7 +10,7 @@ SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 300
 SCREEN_TITLE = "Sprite Player Movement - Keyboard"
 
-SPRITE_IMAGE_PLAYER = "images/blue-collar-zombie.png"
+SPRITE_IMAGE_PLAYER = "assets/images/blue-collar-zombie.png"
 SPRITE_SCALING_PLAYER = 1.0
 SPRITE_SETUP_CENTER_X_PLAYER = 50
 SPRITE_SETUP_CENTER_Y_PLAYER = 50

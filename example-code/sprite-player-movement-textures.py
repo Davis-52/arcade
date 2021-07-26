@@ -47,10 +47,10 @@ class MyGame(arcade.Window):
         self.player_sprite.change_x = 0
         self.player_sprite.change_y = 0
         self.player_sprite.textures = {
-            'up': arcade.load_texture("images/blue-collar-zombie-up.png"),
-            'down': arcade.load_texture("images/blue-collar-zombie-down.png"),
-            'left': arcade.load_texture("images/blue-collar-zombie-left.png"),
-            'right': arcade.load_texture("images/blue-collar-zombie-right.png")}
+            'up': arcade.load_texture("assets/images/blue-collar-zombie-up.png"),
+            'down': arcade.load_texture("assets/images/blue-collar-zombie-down.png"),
+            'left': arcade.load_texture("assets/images/blue-collar-zombie-left.png"),
+            'right': arcade.load_texture("assets/images/blue-collar-zombie-right.png")}
         self.player_sprite.texture = self.player_sprite.textures['down']
         self.player_list.append(self.player_sprite)
 
